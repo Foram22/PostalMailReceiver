@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">PostalMailReceiver</string>
+    <string name="login">Login</string>
+    <string name="submit">Submit</string>
+    <string name="register">Register</string>
+    <string name="register_here"><u>Register here</u></string>
+    <string name="new_user">New User?</string>
+    <string name="enter_password">Enter Password</string>
+    <string name="enter_email">Enter Email</string>
+    <string name="enter_name">Enter Name</string>
+    <string name="enter_confirm_password">Enter Confirm Password</string>
+    <string name="already_have_an_account">Already have an Account?</string>
+    <string name="sign_in_here"><u>Sign In here</u></string>
 </resources>
