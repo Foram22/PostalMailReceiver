@@ -11,4 +11,5 @@
     <string name="enter_confirm_password">Enter Confirm Password</string>
     <string name="already_have_an_account">Already have an Account?</string>
     <string name="sign_in_here"><u>Sign In here</u></string>
+    <string name="postal_mail_receiver">Postal MaiL Receiver</string>
 </resources>

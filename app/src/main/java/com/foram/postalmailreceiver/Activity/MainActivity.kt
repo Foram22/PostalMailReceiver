@@ -1,4 +1,4 @@
-package com.foram.postalmailreceiver
+package com.foram.postalmailreceiver.Activity
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
