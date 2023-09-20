@@ -12,4 +12,7 @@
     <string name="already_have_an_account">Already have an Account?</string>
     <string name="sign_in_here"><u>Sign In here</u></string>
     <string name="postal_mail_receiver">Postal MaiL Receiver</string>
+    <string name="home">Home</string>
+    <string name="notification">Notification</string>
+    <string name="profile">Profile</string>
 </resources>
