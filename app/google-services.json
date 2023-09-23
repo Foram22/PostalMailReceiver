@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "900160270501",
+    "project_id": "postalmailreceiver",
+    "storage_bucket": "postalmailreceiver.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:900160270501:android:ce40e3c002210604769d4c",
+        "android_client_info": {
+          "package_name": "com.foram.postalmailreceiver"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyATb_cSZeqBwMSFjI1LQ4ZMu8_JaZ6haPE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

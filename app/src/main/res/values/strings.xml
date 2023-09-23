@@ -15,4 +15,27 @@
     <string name="home">Home</string>
     <string name="notification">Notification</string>
     <string name="profile">Profile</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="postal_mails">Postal Mails</string>
+    <string name="send_by">Send by:</string>
+    <string name="profile_details">Profile Details</string>
+    <string name="name">Name:</string>
+    <string name="email">Email:</string>
+    <string name="user_type">User Type:</string>
+    <string name="logout">Logout</string>
+    <string name="password">Password:</string>
+    <string name="enter_phone_number">Enter Phone Number</string>
+    <string name="phone_number">Phone Number:</string>
+    <string name="favourite">Favourite</string>
+    <string name="unfavourite">Unfavourite</string>
+    <string name="back_button">Back Button</string>
+    <string name="mail_detail">Mail Detail</string>
+    <string name="image_of_mail">Image of Mail</string>
+    <string name="details">Details</string>
+    <string name="sender_name">Sender Name:</string>
+    <string name="sender_email">Sender Email:</string>
+    <string name="date">Date:</string>
+    <string name="date_and_time">Date and Time:</string>
+    <string name="favourite_mails">Favourite Mails</string>
 </resources>

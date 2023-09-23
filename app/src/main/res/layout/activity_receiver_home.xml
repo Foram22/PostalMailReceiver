@@ -7,10 +7,11 @@
     tools:context=".Activity.ReceiverHomeActivity">
 
     <FrameLayout
+        android:id="@+id/frameLayout"
         app:layout_constraintBottom_toTopOf="@id/bnv"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_width="match_parent"
-        android:layout_height="0dp"/>
+        android:layout_height="0dp" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:layout_width="match_parent"
