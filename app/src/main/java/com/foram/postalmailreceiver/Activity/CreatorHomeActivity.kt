@@ -24,8 +24,8 @@ class CreatorHomeActivity : AppCompatActivity() {
 
         binding.bnv.setOnNavigationItemSelectedListener {
             when(it.itemId) {
-                R.id.receiver_home -> setCurrentFragment(homeFragment)
-                R.id.receiver_profile -> setCurrentFragment(profileFragment)
+                R.id.creator_home -> setCurrentFragment(homeFragment)
+                R.id.creator_profile -> setCurrentFragment(profileFragment)
             }
             true
         }

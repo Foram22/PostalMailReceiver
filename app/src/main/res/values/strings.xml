@@ -38,4 +38,8 @@
     <string name="date">Date:</string>
     <string name="date_and_time">Date and Time:</string>
     <string name="favourite_mails">Favourite Mails</string>
+    <string name="capture_image">Capture Image</string>
+    <string name="recent_mails_sent_by_you">Recent Mails sent by you:</string>
+    <string name="enter_receiver_s_email_here">Enter receiver\'s Email here.</string>
+    <string name="send">Send</string>
 </resources>

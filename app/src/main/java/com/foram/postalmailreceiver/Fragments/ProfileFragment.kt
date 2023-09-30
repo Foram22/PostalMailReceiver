@@ -40,7 +40,8 @@ class ProfileFragment : Fragment() {
         binding.tvUserType.text = userModel.userType.toString()
 
         binding.btnLogout.setOnClickListener {
-            sp?.edit()?.clear()
+            sp?.edit()?.remove("user_model")?.apply()
+            sp?.edit()?.clear()?.apply()
             requireActivity().run {
                 startActivity(Intent(this, MainActivity::class.java))
                 finish()

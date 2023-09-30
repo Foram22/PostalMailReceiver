@@ -8,17 +8,17 @@
 
     <FrameLayout
         android:id="@+id/frameLayout"
-        app:layout_constraintBottom_toTopOf="@id/bnv"
-        app:layout_constraintTop_toTopOf="parent"
         android:layout_width="match_parent"
-        android:layout_height="0dp" />
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/bnv"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:layout_width="match_parent"
-        android:background="@drawable/bottom_navigation_background"
         android:id="@+id/bnv"
-        app:menu="@menu/receiver_menu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bottom_navigation_background"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_height="wrap_content"/>
+        app:menu="@menu/receiver_menu" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
