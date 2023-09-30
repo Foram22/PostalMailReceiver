@@ -23,12 +23,67 @@ import java.lang.reflect.Type
 import java.text.SimpleDateFormat
 import java.util.*
 
+@Suppress("DEPRECATION")
 class ImageCaptureActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityImageCaptureBinding
 
     private lateinit var auth: FirebaseAuth
     private lateinit var database: DatabaseReference
+
+    lateinit var userModel: UserModel
+    lateinit var receiverUserModel: UserModel
+    var imageBitmap: Bitmap? = null
+    lateinit var postalMailRef: DatabaseReference
+
+    private var postMailValueEventListener = object : ValueEventListener {
+        override fun onCancelled(error: DatabaseError) {
+            Toast.makeText(
+                this@ImageCaptureActivity,
+                "Failed to add postal mail. Please try again later!.",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+
+        override fun onDataChange(snapshot: DataSnapshot) {
+            val storageRef =
+                Firebase.storage.reference.child("images/${snapshot.key}.jpg")
+            val baos = ByteArrayOutputStream()
+            imageBitmap?.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+            val data = baos.toByteArray()
+
+            val uploadTask = storageRef.putBytes(data)
+            var imageUrl: String
+
+
+            uploadTask.addOnSuccessListener {
+                storageRef.downloadUrl.addOnSuccessListener {
+                    imageUrl = it.toString()
+
+                    postalMailRef.setValue(
+                        PostalMailModel(
+                            postalMailRef.key.toString(),
+                            imageUrl,
+                            userModel.name,
+                            userModel.email,
+                            receiverUserModel.name,
+                            binding.etReceiverEmail.text.toString(),
+                            false,
+                            getCurrentTimeStamp(),
+                            false
+                        )
+                    ).addOnSuccessListener {
+                        Toast.makeText(
+                            this@ImageCaptureActivity,
+                            "Mail sent successfully.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        finish()
+                    }
+                }
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,16 +99,16 @@ class ImageCaptureActivity : AppCompatActivity() {
         val json = sp?.getString("user_model", null)
         val type: Type = object : TypeToken<UserModel>() {}.type
 
-        val userModel = gson.fromJson<Any>(json, type) as UserModel
+        userModel = gson.fromJson<Any>(json, type) as UserModel
 
-        val imageBitmap = intent.getParcelableExtra<Bitmap>("capturedImage")
+        imageBitmap = intent.getParcelableExtra<Bitmap>("capturedImage")
         binding.ivCaptureImage.setImageBitmap(imageBitmap)
 
         binding.btnSend.setOnClickListener {
             if (binding.etReceiverEmail.text.equals(null)) {
                 binding.etReceiverEmail.error = "Please enter receiver's Email."
             } else {
-                addPostalMailToFirebase(imageBitmap, userModel)
+                addPostalMailToFirebase()
             }
         }
     }
@@ -63,7 +118,7 @@ class ImageCaptureActivity : AppCompatActivity() {
         return sdf.format(Date())
     }
 
-    private fun addPostalMailToFirebase(imageBitmap: Bitmap?, userModel: UserModel) {
+    private fun addPostalMailToFirebase() {
 
         // Check if the receiver email exists
         val usersRef = Firebase.database.getReference("users")
@@ -72,66 +127,14 @@ class ImageCaptureActivity : AppCompatActivity() {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
 
-                    var receiverUserModel = UserModel()
+                    receiverUserModel = UserModel()
                     for (childSnapshot in snapshot.children) {
                         receiverUserModel = childSnapshot.getValue(UserModel::class.java)!!
                         break
                     }
 
-                    val postalMailRef = database.push()
-                    postalMailRef.addValueEventListener(object : ValueEventListener {
-                        override fun onCancelled(error: DatabaseError) {
-                            Toast.makeText(
-                                this@ImageCaptureActivity,
-                                "Failed to add postal mail. Please try again later!.",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-
-                        override fun onDataChange(snapshot: DataSnapshot) {
-                            val storageRef =
-                                Firebase.storage.reference.child("images/${snapshot.key}.jpg")
-                            val baos = ByteArrayOutputStream()
-                            imageBitmap?.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-                            val data = baos.toByteArray()
-
-                            val uploadTask = storageRef.putBytes(data)
-                            var imageUrl = ""
-
-                            uploadTask.continueWithTask { task ->
-                                if (!task.isSuccessful) {
-                                    task.exception?.let {
-                                        throw it
-                                    }
-                                }
-                                storageRef.downloadUrl
-                            }.addOnCompleteListener { task ->
-                                if (task.isSuccessful) {
-                                    imageUrl = task.result.toString()
-                                }
-                            }
-
-                            postalMailRef.setValue(
-                                PostalMailModel(
-                                    postalMailRef.key.toString(),
-                                    imageUrl,
-                                    userModel.name,
-                                    userModel.email,
-                                    receiverUserModel.name,
-                                    binding.etReceiverEmail.text.toString(),
-                                    false,
-                                    getCurrentTimeStamp(),
-                                    false
-                                )
-                            )
-                            Toast.makeText(
-                                this@ImageCaptureActivity,
-                                "Mail sent successfully.",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            finish()
-                        }
-                    })
+                    postalMailRef = database.push()
+                    postalMailRef.addValueEventListener(postMailValueEventListener)
                 }
             }
 
@@ -143,5 +146,17 @@ class ImageCaptureActivity : AppCompatActivity() {
                 ).show()
             }
         })
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        postalMailRef.removeEventListener(postMailValueEventListener)
+    }
+
+    override fun onStop() {
+        super.onStop()
+
+        postalMailRef.removeEventListener(postMailValueEventListener)
     }
 }

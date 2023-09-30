@@ -1,11 +1,11 @@
 package com.foram.postalmailreceiver.Fragments
 
 import android.Manifest.permission.CAMERA
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.opengl.Visibility
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
@@ -21,15 +21,45 @@ import com.foram.postalmailreceiver.Model.PostalMailModel
 import com.foram.postalmailreceiver.Model.UserModel
 import com.foram.postalmailreceiver.Model.UserType
 import com.foram.postalmailreceiver.databinding.FragmentHomeBinding
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.lang.reflect.Type
 
+@Suppress("DEPRECATION")
 class HomeFragment : Fragment() {
 
     private lateinit var binding: FragmentHomeBinding
 
     private val CAMERA_PERMISSION_REQUEST_CODE = 1001
+
+    lateinit var postalMailList : ArrayList<PostalMailModel>
+    private lateinit var userModel : UserModel
+    lateinit var adapter : PostalMailAdapter
+
+    override fun onResume() {
+        super.onResume()
+
+        if (userModel.userType == UserType.MailCreator) {
+            binding.llCreator.visibility = View.VISIBLE
+            binding.llReceiver.visibility = View.VISIBLE
+            binding.tvPostalMailsTitle.visibility = View.GONE
+            binding.tvRecentMailsSendByYou.visibility = View.VISIBLE
+
+            getPostalMail("senderEmail")
+        } else {
+            binding.llCreator.visibility = View.GONE
+            binding.llReceiver.visibility = View.VISIBLE
+            binding.tvPostalMailsTitle.visibility = View.VISIBLE
+            binding.tvRecentMailsSendByYou.visibility = View.GONE
+
+            getPostalMail("receiverEmail")
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,38 +74,11 @@ class HomeFragment : Fragment() {
         val json = sp?.getString("user_model", null)
         val type: Type = object : TypeToken<UserModel>() {}.type
 
-        val userModel = gson.fromJson<Any>(json, type) as UserModel
+        userModel = gson.fromJson<Any>(json, type) as UserModel
 
-        if (userModel.userType == UserType.MailCreator) {
-            binding.llCreator.visibility = View.VISIBLE
-            binding.llReceiver.visibility = View.VISIBLE
-            binding.tvPostalMailsTitle.visibility = View.GONE
-            binding.tvRecentMailsSendByYou.visibility = View.VISIBLE
-        } else {
-            binding.llCreator.visibility = View.GONE
-            binding.llReceiver.visibility = View.VISIBLE
-            binding.tvPostalMailsTitle.visibility = View.VISIBLE
-            binding.tvRecentMailsSendByYou.visibility = View.GONE
-        }
-        val data = ArrayList<PostalMailModel>()
+        postalMailList = ArrayList()
 
-        for (i in 1..10) {
-            data.add(
-                PostalMailModel(
-                    "",
-                    "abc",
-                    "foram",
-                    "foram@gmail.com",
-                    "20 Sep",
-                    "test@gmail.com",
-                    false,
-                    "2020",
-                    false
-                )
-            )
-        }
-
-        val adapter = PostalMailAdapter(data, context)
+        adapter = PostalMailAdapter(postalMailList, context)
         binding.rvMails.adapter = adapter
 
         binding.btnCaptureImage.setOnClickListener {
@@ -86,6 +89,28 @@ class HomeFragment : Fragment() {
         }
 
         return binding.root
+    }
+
+    private fun getPostalMail(s: String) {
+        val postalMailRef = Firebase.database.reference.child("postal_mail")
+        val query = postalMailRef.orderByChild(s).equalTo(userModel.email)
+
+        query.addValueEventListener(object : ValueEventListener{
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+
+            @SuppressLint("NotifyDataSetChanged")
+            override fun onDataChange(snapshot: DataSnapshot) {
+
+                postalMailList.clear()
+                for (childSnapshot in snapshot.children){
+                    val postalMail = childSnapshot.getValue(PostalMailModel::class.java)
+                    postalMail?.let { postalMailList.add(postalMail) }
+                    adapter.notifyDataSetChanged()
+                }
+            }
+        })
     }
 
     private fun checkForCameraAccess() {
@@ -107,6 +132,7 @@ class HomeFragment : Fragment() {
         startActivityForResult(cameraIntent, 1)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
