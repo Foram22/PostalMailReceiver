@@ -11,15 +11,22 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.foram.postalmailreceiver.Activity.MailDetailActivity
 import com.foram.postalmailreceiver.Model.PostalMailModel
+import com.foram.postalmailreceiver.Model.UserModel
+import com.foram.postalmailreceiver.Model.UserType
 import com.foram.postalmailreceiver.R
 
-class PostalMailAdapter(private val data: ArrayList<PostalMailModel>, val context: Context?) : RecyclerView.Adapter<PostalMailAdapter.ViewHolder> () {
+class PostalMailAdapter(
+    private val data: ArrayList<PostalMailModel>,
+    val context: Context?,
+    val userModel: UserModel
+) : RecyclerView.Adapter<PostalMailAdapter.ViewHolder> () {
 
 
     class ViewHolder(ItemView: View) : RecyclerView.ViewHolder(ItemView) {
         val ivPostalMailImage: ImageView = itemView.findViewById(R.id.ivPostalMailImage)
         val tvSenderName: TextView = itemView.findViewById(R.id.tvSenderName)
         val tvDateTime: TextView = itemView.findViewById(R.id.tvDateTime)
+        val tvSendBySendToTitle: TextView = itemView.findViewById(R.id.tvSendBySendToTitle)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -33,17 +40,22 @@ class PostalMailAdapter(private val data: ArrayList<PostalMailModel>, val contex
             .load(data[position].imageUri)
             .into(holder.ivPostalMailImage)
 
-        holder.tvSenderName.text = data[position].senderName
         holder.tvDateTime.text = data[position].dateTime
 
-        holder.itemView.setOnClickListener {
-            val intent = Intent(context, MailDetailActivity::class.java)
-            intent.putExtra("item_image", data[position].imageUri)
-            intent.putExtra("item_sender_name", data[position].senderName)
-            intent.putExtra("item_sender_email",data[position].senderEmail)
-            intent.putExtra("item_datetime", data[position].dateTime)
-            intent.putExtra("item_isFav", data[position].isFavourite)
-            context?.startActivity(Intent(intent))
+        if (userModel.userType == UserType.MailReceiver) {
+
+            holder.tvSendBySendToTitle.text = "Sended by: "
+            holder.tvSenderName.text = data[position].senderName
+
+            holder.itemView.setOnClickListener {
+                val intent = Intent(context, MailDetailActivity::class.java)
+                intent.putExtra("postal_mail_model", data[position])
+                context?.startActivity(Intent(intent))
+            }
+        }
+        else{
+            holder.tvSendBySendToTitle.text = "Sended to: "
+            holder.tvSenderName.text = data[position].receiverName
         }
     }
 

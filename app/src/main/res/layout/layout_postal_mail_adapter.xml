@@ -33,6 +33,7 @@
                 android:layout_marginStart="20dp">
 
                 <TextView
+                    android:id="@+id/tvSendBySendToTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/send_by"

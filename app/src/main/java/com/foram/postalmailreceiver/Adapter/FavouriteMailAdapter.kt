@@ -1,6 +1,7 @@
 package com.foram.postalmailreceiver.Adapter
 
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +9,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.foram.postalmailreceiver.Activity.MailDetailActivity
 import com.foram.postalmailreceiver.Model.PostalMailModel
 import com.foram.postalmailreceiver.R
 
@@ -32,22 +34,28 @@ class FavouriteMailAdapter(private val data: ArrayList<PostalMailModel>, val con
             .into(holder.ivPostalMailImage)
 
         holder.tvDateTime.text = data[position].dateTime
-        if (data[position].isFavourite) {
-            holder.ivIsFav.setImageResource(R.drawable.ic_unfavourite)
-        } else {
+        if (data[position].favourite) {
             holder.ivIsFav.setImageResource(R.drawable.ic_favourite)
+        } else {
+            holder.ivIsFav.setImageResource(R.drawable.ic_unfavourite)
         }
 
         holder.ivIsFav.setOnClickListener {
-            if (data[position].isFavourite) {
-                holder.ivIsFav.setImageResource(R.drawable.ic_unfavourite)
-
-                // ToDo save fav or unfav to firebase database
-            } else {
+            if (data[position].favourite) {
                 holder.ivIsFav.setImageResource(R.drawable.ic_favourite)
 
                 // ToDo save fav or unfav to firebase database
+            } else {
+                holder.ivIsFav.setImageResource(R.drawable.ic_unfavourite)
+
+                // ToDo save fav or unfav to firebase database
             }
+        }
+
+        holder.itemView.setOnClickListener {
+            val intent = Intent(context, MailDetailActivity::class.java)
+            intent.putExtra("postal_mail_model", data[position])
+            context?.startActivity(Intent(intent))
         }
     }
 

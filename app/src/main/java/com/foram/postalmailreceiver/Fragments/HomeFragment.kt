@@ -78,7 +78,7 @@ class HomeFragment : Fragment() {
 
         postalMailList = ArrayList()
 
-        adapter = PostalMailAdapter(postalMailList, context)
+        adapter = PostalMailAdapter(postalMailList, context, userModel)
         binding.rvMails.adapter = adapter
 
         binding.btnCaptureImage.setOnClickListener {

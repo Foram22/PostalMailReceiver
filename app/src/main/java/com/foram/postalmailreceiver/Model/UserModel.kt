@@ -5,7 +5,8 @@ data class UserModel(
     val email: String = "",
     val password: String = "",
     val userType: UserType = UserType.MailCreator,
-    val phone: String = ""
+    val phone: String = "",
+    var FCM: String = ""
 )
 
 enum class UserType {

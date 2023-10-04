@@ -5,6 +5,9 @@ import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import com.android.volley.Response
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.Volley
 import com.foram.postalmailreceiver.Model.PostalMailModel
 import com.foram.postalmailreceiver.Model.UserModel
 import com.foram.postalmailreceiver.databinding.ActivityImageCaptureBinding
@@ -15,13 +18,17 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import org.json.JSONException
+import org.json.JSONObject
 import java.io.ByteArrayOutputStream
 import java.lang.reflect.Type
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.HashMap
 
 @Suppress("DEPRECATION")
 class ImageCaptureActivity : AppCompatActivity() {
@@ -33,8 +40,51 @@ class ImageCaptureActivity : AppCompatActivity() {
 
     lateinit var userModel: UserModel
     lateinit var receiverUserModel: UserModel
+
     var imageBitmap: Bitmap? = null
+
     lateinit var postalMailRef: DatabaseReference
+
+    lateinit var imageUrl: String
+
+    lateinit var storageRef : StorageReference
+
+    var shouldStart = true
+
+    private val uploadTaskOnSuccessListener = object : CustomOnSuccessListener {
+        override fun onActionCompleted(result: Any) {
+            storageRef.downloadUrl.addOnSuccessListener {
+                imageUrl = result.toString()
+
+                postalMailRef.setValue(
+                    PostalMailModel(
+                        postalMailRef.key.toString(),
+                        imageUrl,
+                        userModel.name,
+                        userModel.email,
+                        receiverUserModel.name,
+                        binding.etReceiverEmail.text.toString(),
+                        false,
+                        getCurrentTimeStamp(),
+                        false
+                    )
+                ).addOnSuccessListener {
+                    if (shouldStart){
+                        Toast.makeText(
+                            this@ImageCaptureActivity,
+                            "Mail sent successfully.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                        sendNotificationToReceiver()
+                        finish()
+
+                        shouldStart = false
+                    }
+                }
+            }
+        }
+    }
 
     private var postMailValueEventListener = object : ValueEventListener {
         override fun onCancelled(error: DatabaseError) {
@@ -46,42 +96,53 @@ class ImageCaptureActivity : AppCompatActivity() {
         }
 
         override fun onDataChange(snapshot: DataSnapshot) {
-            val storageRef =
+            storageRef =
                 Firebase.storage.reference.child("images/${snapshot.key}.jpg")
             val baos = ByteArrayOutputStream()
             imageBitmap?.compress(Bitmap.CompressFormat.JPEG, 100, baos)
             val data = baos.toByteArray()
 
             val uploadTask = storageRef.putBytes(data)
-            var imageUrl: String
-
 
             uploadTask.addOnSuccessListener {
-                storageRef.downloadUrl.addOnSuccessListener {
-                    imageUrl = it.toString()
+                uploadTaskOnSuccessListener.onActionCompleted(it)
+            }
+        }
+    }
 
-                    postalMailRef.setValue(
-                        PostalMailModel(
-                            postalMailRef.key.toString(),
-                            imageUrl,
-                            userModel.name,
-                            userModel.email,
-                            receiverUserModel.name,
-                            binding.etReceiverEmail.text.toString(),
-                            false,
-                            getCurrentTimeStamp(),
-                            false
-                        )
-                    ).addOnSuccessListener {
-                        Toast.makeText(
-                            this@ImageCaptureActivity,
-                            "Mail sent successfully.",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        finish()
-                    }
+    private fun sendNotificationToReceiver() {
+        val json = JSONObject()
+        try {
+
+            json.put("to", receiverUserModel.FCM)
+
+            val notificationObj = JSONObject()
+            notificationObj.put("title", "New Postal Mail")
+            notificationObj.put("body", "From: ${userModel.name}")
+            notificationObj.put("icon", imageUrl)
+            json.put("notification", notificationObj)
+
+            val url = "https://fcm.googleapis.com/fcm/send"
+            val request: JsonObjectRequest = object : JsonObjectRequest(
+                Method.POST,
+                url,
+                json,
+                Response.Listener { },
+                Response.ErrorListener { }) {
+                override fun getHeaders(): MutableMap<String, String> {
+                    val header: MutableMap<String, String> = HashMap()
+                    header["content-type"] = "application/json"
+                    header["authorization"] =
+                        "key=AAAA0ZW7sKU:APA91bFvmU672U0s6AC1SAtiP7LoVPqm0elsXtK0Xm0WOHiMza4yx4wxokFguvU3PWBQ61gIv9gmw-HQo6J8D9HsXyzn2K7zbb35Yn0AlFKy-AfawymTFyvP-T6ezFhqfZRh5aXYmr6h"
+                    return header
                 }
             }
+
+            val queue = Volley.newRequestQueue(this)
+            queue.add(request).setShouldCache(false)
+
+        } catch (e: JSONException) {
+            e.printStackTrace()
         }
     }
 
@@ -159,4 +220,8 @@ class ImageCaptureActivity : AppCompatActivity() {
 
         postalMailRef.removeEventListener(postMailValueEventListener)
     }
+}
+
+interface CustomOnSuccessListener {
+    fun onActionCompleted(result: Any)
 }

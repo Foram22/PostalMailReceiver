@@ -18,12 +18,14 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.messaging.ktx.messaging
 import com.google.gson.Gson
+import kotlinx.coroutines.tasks.await
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var userModel: UserModel
 
     private lateinit var auth: FirebaseAuth
     private lateinit var database: DatabaseReference
@@ -38,9 +40,6 @@ class MainActivity : AppCompatActivity() {
 
         auth = FirebaseAuth.getInstance()
         database = Firebase.database.reference.child("users")
-
-        userModel =
-            UserModel("Foram", "foram@gmail.com", "Foram@123", UserType.MailCreator, "1234567890")
 
         binding.tvRegisterHere.setOnClickListener {
             startActivity(
@@ -71,27 +70,42 @@ class MainActivity : AppCompatActivity() {
                             val value = snapshot.child(id).getValue(UserModel::class.java)
                             if (value != null) {
 
-                                val gson = Gson()
-                                val json = gson.toJson(value)
-                                editor.putString("user_model", json)
-                                editor.apply()
+                                var token: String
+                                FirebaseMessaging.getInstance().token.addOnCompleteListener {
+                                    if (!it.isSuccessful){
+                                        Log.w("TAG", "Fetching FCM registration token failed", it.exception)
+                                    }
 
-                                if (value.userType.toString() == UserType.MailReceiver.toString()) {
-                                    startActivity(
-                                        Intent(
-                                            this@MainActivity,
-                                            ReceiverHomeActivity::class.java
+                                    token = it.result
+
+                                    // Adding generated firebase cloud messaging token to firebase database
+                                    val userRef = Firebase.database.reference.child("users").child(id)
+                                    userRef.child("FCM").setValue(token).addOnSuccessListener {
+                                        value.FCM = token
+                                    }
+
+                                    val gson = Gson()
+                                    val json = gson.toJson(value)
+                                    editor.putString("user_model", json)
+                                    editor.apply()
+
+                                    if (value.userType.toString() == UserType.MailReceiver.toString()) {
+                                        startActivity(
+                                            Intent(
+                                                this@MainActivity,
+                                                ReceiverHomeActivity::class.java
+                                            )
                                         )
-                                    )
-                                } else {
-                                    startActivity(
-                                        Intent(
-                                            this@MainActivity,
-                                            CreatorHomeActivity::class.java
+                                    } else {
+                                        startActivity(
+                                            Intent(
+                                                this@MainActivity,
+                                                CreatorHomeActivity::class.java
+                                            )
                                         )
-                                    )
+                                    }
+                                    finish()
                                 }
-                                finish()
                             }
                         }
 

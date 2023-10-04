@@ -7,7 +7,7 @@ data class PostalMailModel(
     val senderEmail: String = "",
     val receiverName: String = "",
     val receiverEmail: String = "",
-    val isReceived: Boolean = false,
+    val received: Boolean = false,
     val dateTime: String = "",
-    val isFavourite: Boolean = false
-)
+    val favourite: Boolean = false
+) : java.io.Serializable
