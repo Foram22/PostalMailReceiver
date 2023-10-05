@@ -8,16 +8,20 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/white"
         android:orientation="vertical">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
+            android:background="@drawable/text_bg_design"
             android:gravity="center"
+            android:padding="10dp"
+            android:layout_marginHorizontal="20dp"
             android:text="@string/profile_details"
-            android:textColor="@color/brown"
-            android:textSize="22sp"
+            android:textColor="@color/white"
+            android:textSize="18sp"
             android:textStyle="bold" />
 
         <LinearLayout
@@ -28,7 +32,7 @@
             android:background="@drawable/profile_background"
             android:elevation="10dp"
             android:orientation="vertical"
-            android:padding="10dp">
+            android:padding="20dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -38,7 +42,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/name"
-                    android:textColor="@color/brown"
+                    android:textColor="@color/blue"
                     android:textStyle="bold" />
 
                 <TextView
@@ -46,7 +50,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="5dp"
-                    android:textColor="@color/brown"
+                    android:textColor="@color/blue"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -59,7 +63,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/email"
-                    android:textColor="@color/brown"
+                    android:textColor="@color/blue"
                     android:textStyle="bold" />
 
                 <TextView
@@ -67,7 +71,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="5dp"
-                    android:textColor="@color/brown"
+                    android:textColor="@color/blue"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -80,7 +84,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/phone_number"
-                    android:textColor="@color/brown"
+                    android:textColor="@color/blue"
                     android:textStyle="bold" />
 
                 <TextView
@@ -88,7 +92,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="5dp"
-                    android:textColor="@color/brown"
+                    android:textColor="@color/blue"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -101,7 +105,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/user_type"
-                    android:textColor="@color/brown"
+                    android:textColor="@color/blue"
                     android:textStyle="bold" />
 
                 <TextView
@@ -109,20 +113,20 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="5dp"
-                    android:textColor="@color/brown"
+                    android:textColor="@color/blue"
                     android:textStyle="bold" />
             </LinearLayout>
 
             <LinearLayout
-                android:layout_marginTop="10dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/password"
-                    android:textColor="@color/brown"
+                    android:textColor="@color/blue"
                     android:textStyle="bold" />
 
                 <TextView
@@ -130,7 +134,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="5dp"
-                    android:textColor="@color/brown"
+                    android:textColor="@color/blue"
                     android:textStyle="bold" />
             </LinearLayout>
 

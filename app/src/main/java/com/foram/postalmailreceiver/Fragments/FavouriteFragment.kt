@@ -23,10 +23,10 @@ import java.lang.reflect.Type
 
 class FavouriteFragment : Fragment() {
 
-    lateinit var postalMailList : ArrayList<PostalMailModel>
+    lateinit var postalMailList: ArrayList<PostalMailModel>
     lateinit var adapter: FavouriteMailAdapter
 
-    private lateinit var userModel : UserModel
+    private lateinit var userModel: UserModel
 
     private lateinit var binding: FragmentFavouriteBinding
     override fun onCreateView(
@@ -70,15 +70,25 @@ class FavouriteFragment : Fragment() {
             override fun onDataChange(snapshot: DataSnapshot) {
 
                 postalMailList.clear()
-                for (childSnapshot in snapshot.children){
+                for (childSnapshot in snapshot.children) {
                     val postalMail = childSnapshot.getValue(PostalMailModel::class.java)
 
                     if (postalMail != null) {
                         if (postalMail.favourite) {
                             postalMail.let { postalMailList.add(postalMail) }
                             adapter.notifyDataSetChanged()
+
+                            if (postalMailList.size == 0) {
+                                binding.tvNoFav.visibility = View.VISIBLE
+                            }
                         }
+                    }else{
+                        binding.tvNoFav.visibility = View.VISIBLE
                     }
+                }
+
+                if (postalMailList.size == 0) {
+                    binding.tvNoFav.visibility = View.VISIBLE
                 }
             }
         })

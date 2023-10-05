@@ -47,7 +47,7 @@ class ImageCaptureActivity : AppCompatActivity() {
 
     lateinit var imageUrl: String
 
-    lateinit var storageRef : StorageReference
+    lateinit var storageRef: StorageReference
 
     var shouldStart = true
 
@@ -69,7 +69,7 @@ class ImageCaptureActivity : AppCompatActivity() {
                         false
                     )
                 ).addOnSuccessListener {
-                    if (shouldStart){
+                    if (shouldStart) {
                         Toast.makeText(
                             this@ImageCaptureActivity,
                             "Mail sent successfully.",
@@ -154,6 +154,7 @@ class ImageCaptureActivity : AppCompatActivity() {
 
         auth = FirebaseAuth.getInstance()
         database = Firebase.database.reference.child("postal_mail")
+        postalMailRef = database
 
         val sp = getSharedPreferences("my_sp", Context.MODE_PRIVATE)
         val gson = Gson()
@@ -162,7 +163,7 @@ class ImageCaptureActivity : AppCompatActivity() {
 
         userModel = gson.fromJson<Any>(json, type) as UserModel
 
-        imageBitmap = intent.getParcelableExtra<Bitmap>("capturedImage")
+        imageBitmap = intent.getParcelableExtra("capturedImage")
         binding.ivCaptureImage.setImageBitmap(imageBitmap)
 
         binding.btnSend.setOnClickListener {
@@ -171,6 +172,10 @@ class ImageCaptureActivity : AppCompatActivity() {
             } else {
                 addPostalMailToFirebase()
             }
+        }
+
+        binding.ibBack.setOnClickListener {
+            finish()
         }
     }
 
@@ -212,13 +217,15 @@ class ImageCaptureActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
 
-        postalMailRef.removeEventListener(postMailValueEventListener)
+        if (postalMailRef != null){
+            postalMailRef.removeEventListener(postMailValueEventListener)
+        }
     }
 
     override fun onStop() {
         super.onStop()
 
-        postalMailRef.removeEventListener(postMailValueEventListener)
+//        postalMailRef.removeEventListener(postMailValueEventListener)
     }
 }
 

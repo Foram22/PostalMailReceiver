@@ -42,4 +42,10 @@
     <string name="recent_mails_sent_by_you">Recent Mails sent by you:</string>
     <string name="enter_receiver_s_email_here">Enter receiver\'s Email here.</string>
     <string name="send">Send</string>
+    <string name="you_don_t_have_any_favourite_postal_mails">You don\'t have any favourite postal mails.</string>
+    <string name="confirm_your_email_address">Confirm your email address</string>
+    <string name="we_sent_a_confirmation_email_to">We sent a confirmation email to:</string>
+    <string name="check_your_email_and_click_on_the_confirmation_link_to_continue">Check your email and click on the confirmation link to continue.</string>
+    <string name="get_started">Get Started</string>
+    <string name="send_image">Send Image</string>
 </resources>

@@ -2,36 +2,65 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:background="@color/light_light_blue"
     android:layout_height="match_parent"
     tools:context=".Activity.ImageCaptureActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="20dp">
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/blue"
+            android:padding="20dp">
+
+            <ImageButton
+                android:id="@+id/ibBack"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ic_back_button"
+                android:backgroundTint="@color/white" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="@string/send_image"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+        </LinearLayout>
 
         <ImageView
             android:id="@+id/ivCaptureImage"
             android:layout_width="300dp"
             android:layout_height="300dp"
             android:layout_gravity="center"
+            android:layout_marginTop="20dp"
             android:contentDescription="@string/capture_image" />
 
         <EditText
             android:id="@+id/etReceiverEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="20dp"
             android:autofillHints=""
-            android:background="@drawable/button_design"
+            android:backgroundTint="@color/white"
+            android:elevation="7dp"
+            android:background="@drawable/et_design"
             android:hint="@string/enter_receiver_s_email_here"
             android:inputType="textEmailAddress"
             android:padding="10dp"
-            android:textColor="@color/brown"
-            android:textColorHint="@color/brown" />
+            android:textColor="@color/blue"
+            android:textColorHint="@color/blue" />
 
         <Button
+            android:elevation="10dp"
             android:id="@+id/btnSend"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

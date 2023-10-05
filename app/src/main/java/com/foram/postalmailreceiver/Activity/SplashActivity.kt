@@ -16,6 +16,8 @@ import java.lang.reflect.Type
 class SplashActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySplashBinding
+
+    var isUserVerified = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySplashBinding.inflate(layoutInflater)
@@ -27,21 +29,29 @@ class SplashActivity : AppCompatActivity() {
         val sp = getSharedPreferences("my_sp", MODE_PRIVATE)
         val gson = Gson()
 
-        Handler().postDelayed({
-            if (sp.contains("user_model")){
-                val json = sp?.getString("user_model", null)
-                val type: Type = object : TypeToken<UserModel>() {}.type
-                val userModel = gson.fromJson<Any>(json, type) as UserModel
+        isUserVerified = sp.getBoolean("is_user_verified", false)
 
-                if (userModel.userType.equals(UserType.MailReceiver)){
-                    startActivity(Intent(this, ReceiverHomeActivity::class.java))
+        Handler().postDelayed({
+//            if (sp.contains("is_user_verified") && isUserVerified) {
+                if (sp.contains("user_model")) {
+                    val json = sp?.getString("user_model", null)
+                    val type: Type = object : TypeToken<UserModel>() {}.type
+                    val userModel = gson.fromJson<Any>(json, type) as UserModel
+
+                    if (userModel.userType == UserType.MailReceiver) {
+                        startActivity(Intent(this, ReceiverHomeActivity::class.java))
+                    } else {
+                        startActivity(Intent(this, CreatorHomeActivity::class.java))
+                    }
+                } else {
+                    startActivity(Intent(this, MainActivity::class.java))
                 }
-                else{
-                    startActivity(Intent(this, CreatorHomeActivity::class.java))
-                }
-            }else{
-                startActivity(Intent(this, MainActivity::class.java))
-            }
+//            } else if (sp.contains("is_user_verified") && !isUserVerified) {
+//                startActivity(Intent(this, EmailVerificationActivity::class.java))
+//            }
+//            else {
+//                startActivity(Intent(this, MainActivity::class.java))
+//            }
 
             finish()
         }, 3000)

@@ -37,9 +37,9 @@ class HomeFragment : Fragment() {
 
     private val CAMERA_PERMISSION_REQUEST_CODE = 1001
 
-    lateinit var postalMailList : ArrayList<PostalMailModel>
-    private lateinit var userModel : UserModel
-    lateinit var adapter : PostalMailAdapter
+    lateinit var postalMailList: ArrayList<PostalMailModel>
+    private lateinit var userModel: UserModel
+    lateinit var adapter: PostalMailAdapter
 
     override fun onResume() {
         super.onResume()
@@ -67,7 +67,10 @@ class HomeFragment : Fragment() {
     ): View {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
 
-        binding.rvMails.layoutManager = LinearLayoutManager(context)
+        val linearLayoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, true)
+        linearLayoutManager.stackFromEnd = true
+        binding.rvMails.layoutManager = linearLayoutManager
+//        binding.rvMails.layoutManager = LinearLayoutManager(context)
 
         val sp = context?.getSharedPreferences("my_sp", Context.MODE_PRIVATE)
         val gson = Gson()
@@ -77,6 +80,9 @@ class HomeFragment : Fragment() {
         userModel = gson.fromJson<Any>(json, type) as UserModel
 
         postalMailList = ArrayList()
+
+        binding.tvNoPostalMails.visibility = View.GONE
+        binding.rvMails.visibility = View.VISIBLE
 
         adapter = PostalMailAdapter(postalMailList, context, userModel)
         binding.rvMails.adapter = adapter
@@ -95,19 +101,40 @@ class HomeFragment : Fragment() {
         val postalMailRef = Firebase.database.reference.child("postal_mail")
         val query = postalMailRef.orderByChild(s).equalTo(userModel.email)
 
-        query.addValueEventListener(object : ValueEventListener{
+        query.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(error: DatabaseError) {
 
             }
 
-            @SuppressLint("NotifyDataSetChanged")
+            @SuppressLint("NotifyDataSetChanged", "SetTextI18n")
             override fun onDataChange(snapshot: DataSnapshot) {
 
                 postalMailList.clear()
-                for (childSnapshot in snapshot.children){
+                for (childSnapshot in snapshot.children) {
                     val postalMail = childSnapshot.getValue(PostalMailModel::class.java)
                     postalMail?.let { postalMailList.add(postalMail) }
+
                     adapter.notifyDataSetChanged()
+
+                    if (postalMailList.size == 0) {
+                        binding.tvNoPostalMails.visibility = View.VISIBLE
+                        if (s == "senderEmail") {
+                            binding.tvNoPostalMails.text =
+                                "You haven't send any mails to any receiver."
+                        } else {
+                            binding.tvNoPostalMails.text = "There is no mails for you."
+                        }
+                    }
+                }
+
+                if (postalMailList.size == 0) {
+                    binding.tvNoPostalMails.visibility = View.VISIBLE
+                    if (s == "senderEmail") {
+                        binding.tvNoPostalMails.text =
+                            "You haven't send any mails to any receiver."
+                    } else {
+                        binding.tvNoPostalMails.text = "There is no mails for you."
+                    }
                 }
             }
         })
