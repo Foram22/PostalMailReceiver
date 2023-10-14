@@ -7,6 +7,7 @@ import android.os.Handler
 import android.view.animation.AnimationUtils
 import com.foram.postalmailreceiver.Model.UserModel
 import com.foram.postalmailreceiver.Model.UserType
+import com.foram.postalmailreceiver.MyApplication
 import com.foram.postalmailreceiver.R
 import com.foram.postalmailreceiver.databinding.ActivitySplashBinding
 import com.google.gson.Gson
@@ -22,6 +23,10 @@ class SplashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivitySplashBinding.inflate(layoutInflater)
         setContentView(binding.root)
+    }
+
+    override fun onResume() {
+        super.onResume()
 
         val alphaAnim = AnimationUtils.loadAnimation(this, R.anim.alpha_animation)
         binding.llSplash.startAnimation(alphaAnim)
@@ -32,7 +37,7 @@ class SplashActivity : AppCompatActivity() {
         isUserVerified = sp.getBoolean("is_user_verified", false)
 
         Handler().postDelayed({
-//            if (sp.contains("is_user_verified") && isUserVerified) {
+            if(!MyApplication.shouldPauseSplashNavigation){
                 if (sp.contains("user_model")) {
                     val json = sp?.getString("user_model", null)
                     val type: Type = object : TypeToken<UserModel>() {}.type
@@ -46,14 +51,9 @@ class SplashActivity : AppCompatActivity() {
                 } else {
                     startActivity(Intent(this, MainActivity::class.java))
                 }
-//            } else if (sp.contains("is_user_verified") && !isUserVerified) {
-//                startActivity(Intent(this, EmailVerificationActivity::class.java))
-//            }
-//            else {
-//                startActivity(Intent(this, MainActivity::class.java))
-//            }
 
-            finish()
+                finish()
+            }
         }, 3000)
     }
 }

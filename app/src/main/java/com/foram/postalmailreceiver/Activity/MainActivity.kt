@@ -73,14 +73,19 @@ class MainActivity : AppCompatActivity() {
 
                                 var token: String
                                 FirebaseMessaging.getInstance().token.addOnCompleteListener {
-                                    if (!it.isSuccessful){
-                                        Log.w("TAG", "Fetching FCM registration token failed", it.exception)
+                                    if (!it.isSuccessful) {
+                                        Log.w(
+                                            "TAG",
+                                            "Fetching FCM registration token failed",
+                                            it.exception
+                                        )
                                     }
 
                                     token = it.result
 
                                     // Adding generated firebase cloud messaging token to firebase database
-                                    val userRef = Firebase.database.reference.child("users").child(id)
+                                    val userRef =
+                                        Firebase.database.reference.child("users").child(id)
                                     userRef.child("FCM").setValue(token).addOnSuccessListener {
                                         value.FCM = token
                                     }
@@ -125,7 +130,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun isValidateUserFields(): Boolean {
+    private fun isValidateUserFields(): Boolean {
         val isValid: Boolean
         if (TextUtils.isEmpty(binding.etEmail.text.toString().trim())) {
             binding.etEmail.error = "Please enter your Email."
