@@ -61,6 +61,8 @@ class FirebaseMessagingService : com.google.firebase.messaging.FirebaseMessaging
                         .setLargeIcon(resource)
                         .setStyle(Notification.BigPictureStyle().bigPicture(resource))
                         .setContentIntent(pendingIntent)
+
+                    notifManager.notify(1234, notifBuilder.build())
                 }
             })
 
@@ -70,9 +72,11 @@ class FirebaseMessagingService : com.google.firebase.messaging.FirebaseMessaging
                 .setContentText(message.notification?.body).setAutoCancel(true)
                 .setSmallIcon(R.drawable.ic_email)
                 .setContentIntent(pendingIntent)
+
+            notifManager.notify(1234, notifBuilder.build())
         }
 
-        notifManager.notify(1234, notifBuilder.build())
+
     }
 
     override fun onNewToken(token: String) {

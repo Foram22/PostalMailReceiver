@@ -54,7 +54,7 @@ class ImageCaptureActivity : AppCompatActivity() {
     private val uploadTaskOnSuccessListener = object : CustomOnSuccessListener {
         override fun onActionCompleted(result: Any) {
             storageRef.downloadUrl.addOnSuccessListener {
-                imageUrl = result.toString()
+                imageUrl = it.toString()
 
                 postalMailRef.setValue(
                     PostalMailModel(

@@ -45,7 +45,6 @@ class MainActivity : AppCompatActivity() {
             startActivity(
                 Intent(this, RegistrationActivity::class.java)
             )
-            finish()
         }
 
         sp = getSharedPreferences("my_sp", MODE_PRIVATE)
